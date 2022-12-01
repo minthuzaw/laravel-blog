@@ -30,13 +30,17 @@ class AdminPostController extends Controller
 
         return redirect()->route('admin.posts')->with('success', 'Your post created successfully');
     }
-    public function edit(Post $post){
+
+    public function edit(Post $post)
+    {
         return view('admin.posts.edit', compact('post'));
     }
-    public function update(Post $post, Request $request){
+
+    public function update(Post $post, Request $request)
+    {
         $data = $this->validatePost($post);
 
-        if (isset($data['thumbnail'])){
+        if (isset($data['thumbnail'])) {
 //            Storage::delete('storage/'.$post->thumbnail);
             $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
         }
@@ -46,20 +50,23 @@ class AdminPostController extends Controller
         return redirect()->route('admin.posts')->with('success', 'Post updated!');
 
     }
+
     public function destroy(Post $post): \Illuminate\Http\RedirectResponse
     {
         $thumbnail = $post->thumbnail;
-        if ($thumbnail){
+        if ($thumbnail) {
             Storage::delete($thumbnail);
         }
         $post->delete();
         return back()->with('success', 'Post deleted!');
     }
-    protected function validatePost(?Post $post = null){
+
+    protected function validatePost(?Post $post = null)
+    {
         $post ??= new Post();
         return \request()->validate([
             'title' => 'required',
-            'thumbnail' => $post->exists ? ['image'] : ['required','image'],
+            'thumbnail' => $post->exists ? ['image'] : ['required', 'image'],
             'slug' => ['required', Rule::unique('posts', 'slug')->ignore($post)],
             'excerpt' => 'required',
             'body' => 'required',

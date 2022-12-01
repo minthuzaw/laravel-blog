@@ -25,7 +25,7 @@ class Post extends Model
                 ->where('title', 'like', '%' . $search . '%')
                 ->orWhere('body', 'like', '%' . $search . '%')
                 ->orWhere('excerpt', 'like', '%' . $search . '%'))//for search anything user write
-                ->when($category, fn($query, $category) => $query
+            ->when($category, fn($query, $category) => $query
                 ->whereHas('category', fn($query) => $query->where('slug', $category)//for search category
                 )
             )
